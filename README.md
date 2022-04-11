@@ -2,6 +2,8 @@
 
 Accompanies Herron JC, Hu S, Liu B, Watanabe T, Hahn KM, & Elston TC. <i>Spatial Models of Pattern Formation During Phagocytosis</i>.
 
+[![DOI](https://zenodo.org/badge/480388097.svg)](https://zenodo.org/badge/latestdoi/480388097)
+
 __Includes code to:__
 - Simulate the WPGAP model from Jacobs 2019 (https://doi.org/10.1371/journal.pone.0213188) in a Cartesian coordinate system, and observe changes in spot size due to diffusion. Also, perform parameter sweeps on individual parameter to examine the effect on patterning.
 	- See 'WPGAP_Original_Cartesian_Spot_Size.ipynb', 'WPGAP_Carteisan_Parameter_Sweeps.ipynb', & 'WPGAP_Cartesian_Grid_TwoParamSweep.ipynb'.
