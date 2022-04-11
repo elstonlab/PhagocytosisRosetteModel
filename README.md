@@ -4,7 +4,7 @@ Accompanies Herron JC, Hu S, Liu B, Watanabe T,Hahn KM, & Elston TC. <i>Spatial 
 
 __Includes code to:__
 - Simulate the WPGAP model from Jacobs 2019 (https://doi.org/10.1371/journal.pone.0213188) in a Cartesian coordinate system, and observe changes in spot size due to diffusion. Also, perform parameter sweeps on individual parameter to examine the effect on patterning.
-	- See 'WPGAP_Original_Cartesian_Spot_Size.ipynb', 'WPGAP_Carteisan_Parameter_Sweeps.ipynb', & 'WPGAP_Cartesian_Grid_TwoParamSweep.ipynb'
+	- See 'WPGAP_Original_Cartesian_Spot_Size.ipynb', 'WPGAP_Carteisan_Parameter_Sweeps.ipynb', & 'WPGAP_Cartesian_Grid_TwoParamSweep.ipynb'.
 - Simulate the WPGAP model in a polar coordinate system, and observe the effect of a ring impacting individual parameters on rosette patterning.
 	- See 'WPGAP_FP_TwoStepRing.ipynb'.
 - Simulate a simple reaction-diffusion equation based on a diffusing species being activated locally over a disk. Also, demonstrate how a logistic function can reasonably fit these distributions.
