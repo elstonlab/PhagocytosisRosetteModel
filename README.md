@@ -28,7 +28,7 @@ Note: This code was created using Python v 3.7.11 and Jupyter Notebook 6.1.4
 3. Install time should be insignificant, especially if Python and Jupyter are pre-installed. 
 
 __Additional Notes:__
-- All analyses conducted on a Macintosh computer (2.3 GHz Quad-Core Intel Core i7) and should only require a maximum of a few minutes per step. 
+- Many analyses were conducted on a Macintosh computer (2.3 GHz Quad-Core Intel Core i7) and should only require 0 - 10 minutes per step. However, parameterization was performed on Linux systems (Longleaf cluster at UNC Chapel Hill, 2.50 GHz and 2.30 GHz Intel Processors), each step taking around 3-8 days per CPU.
 
 
 
