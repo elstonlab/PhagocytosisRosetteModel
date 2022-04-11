@@ -1,6 +1,6 @@
 # Phagocytosis Rosette Model
 
-Accompanies Herron JC, Hu S, Liu B, Watanabe T,Hahn KM, & Elston TC. <i>Spatial Models of Pattern Formation During Phagocytosis</i>.
+Accompanies Herron JC, Hu S, Liu B, Watanabe T, Hahn KM, & Elston TC. <i>Spatial Models of Pattern Formation During Phagocytosis</i>.
 
 __Includes code to:__
 - Simulate the WPGAP model from Jacobs 2019 (https://doi.org/10.1371/journal.pone.0213188) in a Cartesian coordinate system, and observe changes in spot size due to diffusion. Also, perform parameter sweeps on individual parameter to examine the effect on patterning.
