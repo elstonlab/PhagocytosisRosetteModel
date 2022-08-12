@@ -31,8 +31,7 @@ def scale(A):
 # steady state ODE
 def ssODE(y,t,params):
     u,v,g,G = y
-    b,gamma,n,delta,e,c,d = params
-    K = 1
+    b,gamma,n,delta,e,c,d,K = params
     
     du = b*v+v*gamma*u**n/(K**n+u**n)-delta*u-e*G*u
     dv = -du
@@ -94,7 +93,7 @@ def WPGAP(params,plot_bool=False,title='None',mu_F = 1.75):
     DG = 100*Du #40
     Dg = 100*Du
 
-    params = [b,np.min(gamma['g']),n,delta,e,np.min(c['g']),d]
+    params = [b,np.min(gamma['g']),n,delta,e,np.min(c['g']),d,K]
     u0,v0,g0,G0 = homogenousSS(T/2,T/2, Tg/2, Tg/2,params)
 
     # Specify problem

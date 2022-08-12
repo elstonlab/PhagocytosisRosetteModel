@@ -34,9 +34,9 @@ def scale(A):
 # steady state ODE
 def ssODE(y,t,params):
     u,v,g,G = y
-    b,gamma,n,delta,e,c,d = params
+    b,gamma,n,delta,e,c,d ,K= params
     
-    du = b*v+v*gamma*u**n/(1+u**n)-delta*u-e*G*u
+    du = b*v+v*gamma*u**n/(K**n+u**n)-delta*u-e*G*u
     dv = -du
     
     dG = c*u*g-d*G
@@ -134,7 +134,7 @@ def WPGAP_Disk(params,disk_r = 2, max_r = 4,title='None'):
     # bp = np.min(b['g']) 
     # cp = np.min(c['g'])
 
-    params = [b,gamma_s,n,delta,e,c_s,d]
+    params = [b,gamma_s,n,delta,e,c_s,d,K]
 #     params = [b_SS,gamma_SS,n,delta,e,c_SS,d]
     u0,v0,g0,G0 = homogenousSS(T/2,T/2, Tg/2, Tg/2,params)
 
@@ -154,13 +154,14 @@ def WPGAP_Disk(params,disk_r = 2, max_r = 4,title='None'):
     problem.parameters['delta'] = delta
     problem.parameters['e'] = e
     problem.parameters['Tg'] = Tg
+    problem.parameters['K'] = K
 
     problem.parameters['Du'] = Du
     problem.parameters['Dv'] = Dv
     problem.parameters['DG'] = DG
     problem.parameters['Dg'] = Dg
 
-    problem.substitutions['f(u,v,G)'] = 'b*v+v*gamma*u**n/(1+u**n)-delta*u-e*G*u'
+    problem.substitutions['f(u,v,G)'] = 'b*v+v*gamma*u**n/(K**n+u**n)-delta*u-e*G*u'
     problem.substitutions['minf(u,v,G)'] = '-f(u,v,G)'
     problem.substitutions['fg(u,G,g)'] = 'c*u*g-dd*G'
     problem.substitutions['minfg(u,G,g)'] = '-fg(u,G,g)'
