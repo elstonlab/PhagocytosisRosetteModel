@@ -25,7 +25,7 @@ number_of_individuals = 50
 mutation_rate = 0.3
 crossover_rate = 0.5
 number_of_params = 6
-filename = '012522_LogisticDecay_Act_Seeded_DG100_MoreGen'
+filename = '012522_Seeded'
 
 
 ###################################################################
@@ -67,10 +67,10 @@ def logistic_decay(x,p_min,p_max,k,x0=1.75):
 def WPGAP(params):
 	c_p,c_m,gamma_p,gamma_m,e,d = params
 	
-	b = 0.0002
-	c_s = 0.1
-	gamma_s = 0.0005
-	delta = 0.04
+	b = 0.002
+	c_s = 1
+	gamma_s = 0.005
+	delta = 0.4
 
 	#Bases:names,modes,intervals,dealiasing
 	phi_basis=de.Fourier('p',64,interval=(0,2*np.pi),dealias=3/2)
@@ -91,12 +91,12 @@ def WPGAP(params):
 	gamma['g'] = logistic_decay(r[0],gamma_s,gamma_p,gamma_m,x0=mu_F)
 	gamma.meta['p']['constant'] = True
 
-	T = 4.04
+	T = 808
 	Tg = 10
 
 	n = 2
-	K = 1
-	Du = .004 #.005 
+	K = 200
+	Du = .04 
 	Dv = 100*Du
 	DG = 100*Du
 	Dg = 100*Du
@@ -171,7 +171,7 @@ def WPGAP(params):
 	v = solver.state['v']
 	G = solver.state ['G']
 	g = solver.state['g']
-	u_seed = pickle.load( open( "PR_9Dots.pickle", "rb" ) )
+	u_seed = pickle.load( open( "PickleFiles/PR_9Dots.pickle", "rb" ) )
 	u_seed_norm = u_seed/np.max(u_seed)
 	urand = 0.1*v0*np.random.rand(*u['g'].shape) + 0.1*v0*u_seed_norm
 
@@ -187,7 +187,7 @@ def WPGAP(params):
 
 	solver.stop_iteration = 400
 
-	dt = 0.25
+	dt = 0.025
 	nonan = True
 	# curr_t = 0
 	# Main loop chceking stopping criteria
@@ -220,9 +220,9 @@ def make_conversion_matrix(number_of_params):
 	# Set minimums and maximums for all parameters. 
 	# c_p,c_m,gamma_p,gamma_m,e,d
 	
-	minimums = np.array([-2,0,-3.3,0,-5,-5])
+	minimums = np.array([-3,0,-3.3,0,-5,-5])
 
-	maximums = np.array([1,1.5,1,1.5,1,1])
+	maximums = np.array([1,1.5,2,1.5,2,2])
 
 	for i in range(len(minimums)):
 		arr_IandP[1,i] = minimums[i] #interp_range_min
@@ -284,8 +284,9 @@ def ScoreFxn(learned_params):
 	q8_std = np.array(q8_std)
 
 	# Training Data
-	AVG_SF = pickle.load(open("Avg_R2_noscale.pickle", "rb"))
-	STD_SF = pickle.load(open("STDev_R2_noscale.pickle", "rb"))
+	#need to scale by GTPase concentration scaling factor (200)
+	AVG_SF = pickle.load(open("PickleFiles/Avg_R2_noscale.pickle", "rb"))*200
+	STD_SF = pickle.load(open("PickleFiles/STDev_R2_noscale.pickle", "rb"))*200
 	#error = np.mean(np.mean(np.abs(avg_curr-AVG_SF)) + np.mean(np.abs(std_curr-STD_SF)))
 	error = np.mean(np.mean(np.abs(avg_curr-AVG_SF[1]))+
 		np.mean(np.abs(q1_std-STD_SF[1]))+np.mean(np.abs(q3_std-STD_SF[1]))+

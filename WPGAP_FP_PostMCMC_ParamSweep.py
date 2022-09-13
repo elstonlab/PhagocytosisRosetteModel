@@ -21,8 +21,9 @@ matplotlib.rcParams['font.family']="sans-serif"
 # rcParams['font.sans-serif'] = ['Tahoma']
 matplotlib.rcParams.update({'font.size': 16})
 
-AVG_SF = pickle.load(open("Avg_R2_noscale_128.pickle", "rb"))
-STD_SF = pickle.load(open("STDev_R2_noscale_128.pickle", "rb"))
+#need to scale by GTPase concentration scaling factor (200)
+AVG_SF = pickle.load(open("PickleFiles/Avg_R2_noscale_128.pickle", "rb"))*200
+STD_SF = pickle.load(open("PickleFiles/STDev_R2_noscale_128.pickle", "rb"))*200
 
 #Scale list between 0 and 1
 def scale(A):
@@ -60,10 +61,10 @@ def WPGAP(params,plot_bool=False,title='None',mu_F = 1.75):
     c_s,c_p,c_m,gamma_s,gamma_p,gamma_m,e,d = params
     
     # Fixed parameters
-    b = 0.0002
-#     c_s = 0.1
-#     gamma_s = 0.0005
-    delta = 0.04
+    b = 0.002
+#     c_s = 1/200
+#     gamma_s = 0.005
+    delta = 0.4
     
     #Bases:names,modes,intervals,dealiasing
     phi_basis=de.Fourier('p',256,interval=(0,2*np.pi),dealias=3/2)
@@ -83,12 +84,12 @@ def WPGAP(params,plot_bool=False,title='None',mu_F = 1.75):
     c.meta['p']['constant'] = True
     gamma.meta['p']['constant'] = True
 
-    T = 4.04
+    T = 808
     Tg = 10
     n = 2
-    K = 1
+    K = 200
 
-    Du = .004 #.005 
+    Du = .04 
     Dv = 100*Du
     DG = 100*Du #40
     Dg = 100*Du
@@ -159,7 +160,7 @@ def WPGAP(params,plot_bool=False,title='None',mu_F = 1.75):
     G = solver.state ['G']
     g = solver.state['g']
     # u_seed = pickle.load( open( "PR_9Dots.pickle", "rb" ) )
-    u_seed = pickle.load( open( "PR_256x128.pickle", "rb" ) )[2].T
+    u_seed = pickle.load( open( "PickleFiles/PR_256x128.pickle", "rb" ) )[2]
     u_seed_norm = u_seed/np.max(u_seed)
     urand = 0.1*v0*np.random.rand(*u['g'].shape) + 0.1*v0*u_seed_norm
 
@@ -170,7 +171,7 @@ def WPGAP(params,plot_bool=False,title='None',mu_F = 1.75):
 
     solver.stop_iteration = 400
 
-    dt =  0.25 
+    dt =  0.025 
     nonan = True
     # Main loop chceking stopping criteria
     while solver.ok and nonan:
@@ -184,29 +185,29 @@ def WPGAP(params,plot_bool=False,title='None',mu_F = 1.75):
                 
     usim = u['g'].T
             
-    phi, r = domain.grids(scales=domain.dealias)
-    phi = np.vstack((phi,2*np.pi))
-    phi,r = np.meshgrid(phi,r)
-    z = np.vstack((u['g'],u['g'][0])).T
-    fig = plt.figure(figsize=(4,4)) #figsize = (18,6))
-    # ax = Axes3D(fig)
+#     phi, r = domain.grids(scales=domain.dealias)
+#     phi = np.vstack((phi,2*np.pi))
+#     phi,r = np.meshgrid(phi,r)
+#     z = np.vstack((u['g'],u['g'][0])).T
+#     fig = plt.figure(figsize=(4,4)) #figsize = (18,6))
+#     # ax = Axes3D(fig)
 
-    plt.subplot(projection="polar")
+#     plt.subplot(projection="polar")
 
-    plt.pcolormesh(phi,r,z,shading='auto',vmin=0.2, vmax = .8)
+#     plt.pcolormesh(phi,r,z,shading='auto',vmin=0.2*200, vmax = .8*200)
 
-    plt.plot(phi, r, color='k', ls='none') 
-#         plt.legend(['t={}'.format(curr_t)],framealpha=0)
-    plt.xticks([])
-    plt.yticks([])
-    if title != 'None':
-        plt.title(title)
-    cbar = plt.colorbar(fraction=0.046, pad=0.04)
+#     plt.plot(phi, r, color='k', ls='none') 
+# #         plt.legend(['t={}'.format(curr_t)],framealpha=0)
+#     plt.xticks([])
+#     plt.yticks([])
+#     if title != 'None':
+#         plt.title(title)
+#     cbar = plt.colorbar(fraction=0.046, pad=0.04)
     
-    cbar.ax.get_yaxis().labelpad = 15
-    cbar.ax.set_ylabel('[u]',rotation=0)
+#     cbar.ax.get_yaxis().labelpad = 15
+#     cbar.ax.set_ylabel('[u]',rotation=0)
 
-    plt.savefig('ParamSweepFinalModelFigures/Sweep_%s.png'%title,bbox_inches='tight',dpi=300)
+    # plt.savefig('../Figures/Sweep_%s.png'%title,bbox_inches='tight',dpi=300)
     
     avg_curr = []
     q1_std, q2_std , q3_std , q4_std,q5_std, q6_std , q7_std , q8_std = [],[],[],[],[],[],[],[]
@@ -253,11 +254,10 @@ def WPGAP(params,plot_bool=False,title='None',mu_F = 1.75):
                 
     return [np.array(u['g'].T), total_error]
 
-c_s = 0.1
+c_s = 1/200
 gamma_s = 0.0005
 
-c_p,c_m,gamma_p,gamma_m,e,d = [ 1.58414687, 12.89118133,  0.96046689,  2.04555275,  3.13967828,
-        4.2980938]
+c_p,c_m,gamma_p,gamma_m,e,d = [ 15.8414687/200, 12.89118133,  9.6046689, 2.04555275,  31.3967828, 42.980938]
 
 param_set = [c_s, c_p,c_m,gamma_s,gamma_p,gamma_m,e,d]
 
@@ -265,7 +265,7 @@ param_set = [c_s, c_p,c_m,gamma_s,gamma_p,gamma_m,e,d]
 
 param_name = 'c_max'
 param_i = 1
-vals = np.linspace(0.8,2.6,11)
+vals = np.linspace(8/200,26/200,11)
 
 # param_name = 'c_km' 
 # param_i = 2
@@ -273,7 +273,7 @@ vals = np.linspace(0.8,2.6,11)
 
 # param_name = 'gam_max'
 # param_i = 4
-# vals = np.linspace(0.85,1.1,11)
+# vals = np.linspace(8.5,11,11)
 
 #param_name = 'gam_km'
 #param_i = 5
@@ -281,11 +281,11 @@ vals = np.linspace(0.8,2.6,11)
 
 #param_name = 'e'
 #param_i = 6
-#vals = np.linspace(2.4,3.6,11)
+#vals = np.linspace(24,36,11)
 
 #param_name = 'd'
 #param_i = 7
-#vals = np.linspace(3.6,5,11)
+#vals = np.linspace(36,50,11)
 
 errors = []
 for val in vals:
@@ -299,12 +299,12 @@ for val in vals:
         print('Error %s = %.2f'%(param_name,val))
         errors.append(100)
 
-plt.figure(figsize=(4,3))
-plt.scatter(vals,errors)
-plt.ylabel('Score')
-plt.xlabel(param_name)
-plt.ylim([0,0.1])
-plt.savefig('ParamSweepFinalModelFigures/Sweep_Errors%s.png'%(param_name),bbox_inches='tight',dpi=300)
+# plt.figure(figsize=(4,3))
+# plt.scatter(vals,errors)
+# plt.ylabel('Score')
+# plt.xlabel(param_name)
+# plt.ylim([0,60])
+# plt.savefig('../Figures/Sweep_Errors%s.png'%(param_name),bbox_inches='tight',dpi=300)
 
-pickle.dump(np.array([vals,errors]),open('ParamSweepFinalModelFigures/%s_errors.pickle'%param_name,'wb'))
+# pickle.dump(np.array([vals,errors]),open('../Figures/%s_errors.pickle'%param_name,'wb'))
 

@@ -96,8 +96,8 @@ def polar_coordinate_interpolation(z,x_grid,y_grid, grid_r,grid_phi):
 def WPGAP_Disk(params,disk_r = 2, max_r = 4,title='None'):
     c_s,c_p,c_m,gamma_s,gamma_p,gamma_m,e,d = params
     
-    b = 0.0002
-    delta = 0.04
+    b = 0.002
+    delta = 0.4
 
     #Bases:names,modes,intervals,dealiasing
     phi_basis=de.Fourier('p',256,interval=(0,2*np.pi),dealias=3/2)
@@ -117,16 +117,18 @@ def WPGAP_Disk(params,disk_r = 2, max_r = 4,title='None'):
     c.meta['p']['constant'] = True
     gamma.meta['p']['constant'] = True
 
-    T = 4.04
+    T = 808
     Tg = 10
-    # b = 0.1
-    # c = 1
-    # delta = 1
-    # e = 1
-    # gamma = 2
+    # b = 1
+    # c = 10/200
+    # delta = 10
+    # e = 10
+    # gamma = 20
     n = 2
-    # d = 1
-    Du = .004 #.005 
+    # d = 10
+    K = 200
+
+    Du = .04 #.005 
     Dv = 100*Du
     DG = 100*Du #40
     Dg = 100*Du
@@ -218,7 +220,7 @@ def WPGAP_Disk(params,disk_r = 2, max_r = 4,title='None'):
 
     solver.stop_iteration = 10000
 
-    dt =  0.25 #0.1
+    dt =  0.025 #0.1
     nonan = True
     not_steady = True
     prev_state = np.zeros((256*3//2,128*3//2))
@@ -234,7 +236,7 @@ def WPGAP_Disk(params,disk_r = 2, max_r = 4,title='None'):
                 
         if solver.iteration% 50 ==0:
             curr_state = np.array(u['g'])
-            if np.max(np.abs(curr_state-prev_state)) < 10e-4:
+            if np.max(np.abs(curr_state-prev_state)) < 10e-2:
                 print(np.max(np.abs(curr_state-prev_state)))
                 print('Steady state at t = %.2f'%(np.round(solver.iteration*dt,2)))
                 not_steady = False
@@ -274,7 +276,7 @@ def WPGAP_Disk(params,disk_r = 2, max_r = 4,title='None'):
 
     plt.subplot(projection="polar")
 
-    plt.pcolormesh(phi,r,z,shading='auto',vmin=0.2, vmax = .8)
+    plt.pcolormesh(phi,r,z,shading='auto',vmin=0.2*200, vmax = 0.8*200)
 
     plt.plot(phi, r, color='k', ls='none') 
 #         plt.legend(['t={}'.format(curr_t)],framealpha=0)
@@ -287,18 +289,18 @@ def WPGAP_Disk(params,disk_r = 2, max_r = 4,title='None'):
     cbar.ax.get_yaxis().labelpad = 15
     cbar.ax.set_ylabel('[u]',rotation=0)
     
-    # plt.savefig('HoleFigures/HoleRadii%.2f_4.pdf'%(disk_r),bbox_inches='tight',dpi=300)
-    # plt.savefig('HoleFigures/HoleRadii%.2f_4.png'%(disk_r),bbox_inches='tight',dpi=300)
+    # plt.savefig('../Figures/HoleRadii%.2f_4.pdf'%(disk_r),bbox_inches='tight',dpi=300)
+    # plt.savefig('../Figures/HoleRadii%.2f_4.png'%(disk_r),bbox_inches='tight',dpi=300)
     plt.close('all')
 
     return [u['g'].T,v['g'].T]
 
 
 # MCMC Parameter Set
-c_s = 0.1
-gamma_s = 0.0005
+c_s = 1/200
+gamma_s = 0.005
 
-c_p,c_m,gamma_p,gamma_m,e,d = [ 1.58414687, 12.89118133,  0.96046689, 2.04555275,  3.13967828, 4.2980938]
+c_p,c_m,gamma_p,gamma_m,e,d = [ 15.8414687/200, 12.89118133,  9.6046689, 2.04555275,  31.3967828, 42.980938]
         
 #hole simulations when decay constants negative (thus, inverted)
 param_set = [c_s, c_p,-c_m,gamma_s,gamma_p,-gamma_m,e,d]
@@ -328,9 +330,9 @@ for i in range(10):
     labels.append(l)
     nums.append(n)
 
-pickle.dump(us,open( "hole_us_%.2f.pickle"%radii, "wb" ))
-pickle.dump(labels,open( "hole_labels_%.2f.pickle"%radii, "wb" ) )
-pickle.dump(np.array([all_radii, nums]),open( "hole_nums_%.2f.pickle"%radii, "wb" ) )
+# pickle.dump(us,open( "hole_us_%.2f.pickle"%radii, "wb" ))
+# pickle.dump(labels,open( "hole_labels_%.2f.pickle"%radii, "wb" ) )
+# pickle.dump(np.array([all_radii, nums]),open( "hole_nums_%.2f.pickle"%radii, "wb" ) )
 
 
 
