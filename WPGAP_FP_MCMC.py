@@ -20,9 +20,9 @@ np.seterr(over='ignore');
 #Suppress most Dedalus output
 de.logging_setup.rootlogger.setLevel('ERROR')
 
-
-AVG_SF = pickle.load(open("Avg_R2_noscale.pickle", "rb"))
-STD_SF = pickle.load(open("STDev_R2_noscale.pickle", "rb"))
+#need to scale by GTPase concentration scaling factor (200)
+AVG_SF = pickle.load(open("PickleFiles/Avg_R2_noscale.pickle", "rb"))*200
+STD_SF = pickle.load(open("PickleFiles/STDev_R2_noscale.pickle", "rb"))*200
 
 SF_radii = AVG_SF[0]
 SF_data = np.vstack([AVG_SF[1], [STD_SF[1] for i in range(8)]]).T
@@ -65,10 +65,10 @@ def WPGAP(params):
     c_p,c_m,gamma_p,gamma_m,e,d = params
     
     #Fixed parameters
-    b = 0.0002
-    c_s = 0.1
-    gamma_s = 0.0005
-    delta = 0.04
+    b = 0.002
+    c_s = 1/200
+    gamma_s = 0.005
+    delta = 0.4
     
     #Bases:names,modes,intervals,dealiasing
     phi_basis=de.Fourier('p',64,interval=(0,2*np.pi),dealias=3/2)
@@ -88,12 +88,12 @@ def WPGAP(params):
     gamma['g'] = logistic_decay(r[0],gamma_s,gamma_p,gamma_m,x0=mu_F)
     gamma.meta['p']['constant'] = True
 
-    T = 4.04
+    T = 808
     Tg = 10
     n = 2
-    K = 1
+    K = 200
 
-    Du = .004 #.005 
+    Du = .04
     Dv = 100*Du
     DG = 100*Du #40
     Dg = 100*Du
@@ -164,7 +164,7 @@ def WPGAP(params):
     v = solver.state['v']
     G = solver.state ['G']
     g = solver.state['g']
-    u_seed = pickle.load( open( "PR_9Dots.pickle", "rb" ) )
+    u_seed = pickle.load( open( "PickleFiles/PR_9Dots.pickle", "rb" ) )
     u_seed_norm = u_seed/np.max(u_seed)
     urand = 0.1*v0*np.random.rand(*u['g'].shape) + 0.1*v0*u_seed_norm
 
@@ -175,7 +175,7 @@ def WPGAP(params):
 
     solver.stop_iteration = 400 
 
-    dt =  0.25 
+    dt =  0.025 
     nonan = True
     # Main loop chceking stopping criteria
     while solver.ok and nonan:
@@ -245,12 +245,12 @@ mcstat.data.add_data_set(x=np.arange(0,96),
                          user_defined_object=SF_radii)
 
 # add model parameters and set prior value and constraints
-mcstat.parameters.add_model_parameter(name='c_p', theta0=1.15, minimum=0)
+mcstat.parameters.add_model_parameter(name='c_p', theta0=11.5/200, minimum=0)
 mcstat.parameters.add_model_parameter(name='c_m', theta0=13.29, minimum=1,maximum=50)
-mcstat.parameters.add_model_parameter(name='gamma_p', theta0=0.95, minimum=0)
+mcstat.parameters.add_model_parameter(name='gamma_p', theta0=9.5, minimum=0)
 mcstat.parameters.add_model_parameter(name='gamma_m', theta0=1.99, minimum=1,maximum=50)
-mcstat.parameters.add_model_parameter(name='e', theta0=3.25, minimum=0)
-mcstat.parameters.add_model_parameter(name='d', theta0=4.3, minimum=0)
+mcstat.parameters.add_model_parameter(name='e', theta0=32.5, minimum=0)
+mcstat.parameters.add_model_parameter(name='d', theta0=43.0, minimum=0)
 
 now = datetime.now()
 dt_string = now.strftime("%Y%m%d")
